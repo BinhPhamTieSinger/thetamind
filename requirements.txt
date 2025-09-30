@@ -10,3 +10,5 @@ sqlalchemy
 databases
 python-dotenv
 jinja2
+passlib
+bcrypt==4.1.2

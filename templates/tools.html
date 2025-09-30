@@ -13,10 +13,15 @@
             <a href="/" class="logo">θ-Mind</a>
             <ul class="nav-links">
                 <li><a href="/">Home</a></li>
-                <li><a href="/tools">Tools</a></li>
-                <li><a href="/login">Login</a></li>
-                <li><a href="/register">Register</a></li>
-                <li><a href="/#about">About</a></li>
+                <li><a href="/tools" class="active">Tools</a></li>
+                <li><a href="/about">About</a></li>
+                {% if user %}
+                    <li><a href="/dashboard">Dashboard</a></li>
+                    <li><a href="/logout">Logout</a></li>
+                {% else %}
+                    <li><a href="/login">Login</a></li>
+                    <li><a href="/register">Register</a></li>
+                {% endif %}
             </ul>
             <button id="theme-toggle" class="theme-toggle-btn">
                 <i class="fas fa-sun"></i>
@@ -26,54 +31,38 @@
     </nav>
 
     <main class="page-content">
-        <section id="tools" class="tools">
+        <section id="topics" class="topics-section">
             <div class="container">
-                <h2>Practice & AI Tools</h2>
-                <div class="tool-categories">
-                    <div class="category-card">
-                        <h3>Algebra</h3>
-                        <p>From linear equations to polynomials and beyond.</p>
-                        <a href="#" class="btn btn-primary">Practice</a>
-                    </div>
-                    <div class="category-card">
-                        <h3>Geometry</h3>
-                        <p>Explore shapes, spaces, and the properties of figures.</p>
-                        <a href="#" class="btn btn-primary">Practice</a>
-                    </div>
-                    <div class="category-card">
-                        <h3>Calculus</h3>
-                        <p>Dive into derivatives, integrals, and the study of change.</p>
-                        <a href="#" class="btn btn-primary">Practice</a>
-                    </div>
-                    <div class="category-card">
-                        <h3>Statistics & Probability</h3>
-                        <p>Analyze data and understand the mathematics of chance.</p>
-                        <a href="#" class="btn btn-primary">Practice</a>
-                    </div>
-                     <div class="category-card">
-                        <h3>Discrete Math</h3>
-                        <p>Logic, set theory, graph theory, and algorithms.</p>
-                        <a href="#" class="btn btn-primary">Practice</a>
-                    </div>
-                     <div class="category-card">
-                        <h3>Advanced Topics</h3>
-                        <p>Matrices, linear algebra, differential equations.</p>
-                        <a href="#" class="btn btn-primary">Practice</a>
-                    </div>
+                <h2>Choose Your Path</h2>
+                <p class="section-subtitle">Select a topic to begin your journey with our AI-guided lessons and practice problems.</p>
+                <div class="topics-grid">
+                    <a href="/algebra" class="topic-card">
+                        <div class="topic-icon algebra-icon"><i class="fas fa-square-root-alt"></i></div>
+                        <div class="topic-content"><h3>Algebra</h3><p>Master variables, equations, and functions.</p></div>
+                    </a>
+                    <a href="/geometry" class="topic-card">
+                        <div class="topic-icon geometry-icon"><i class="fas fa-drafting-compass"></i></div>
+                        <div class="topic-content"><h3>Geometry</h3><p>Explore shapes, angles, and spatial reasoning.</p></div>
+                    </a>
+                    <a href="/calculus" class="topic-card">
+                        <div class="topic-icon calculus-icon"><i class="fas fa-infinity"></i></div>
+                        <div class="topic-content"><h3>Calculus</h3><p>Uncover the mathematics of change.</p></div>
+                    </a>
                 </div>
             </div>
         </section>
-
-        <section id="ai-solver" class="introduction">
+        
+        <section id="ai-solver" class="ai-solver-section">
             <div class="container">
-                <h2>AI Problem Solver</h2>
-                <p>Stuck on a problem? Upload an image or type it out. Our AI will provide a step-by-step solution and explain the core concepts.</p>
-                <div class="solver-area">
-                    <textarea placeholder="Type your math problem here... e.g., 'Solve for x in 2x + 5 = 15'"></textarea>
-                    <div class="solver-buttons">
-                        <button class="btn btn-primary">Upload Image <i class="fas fa-camera"></i></button>
-                        <button class="btn btn-secondary">Get Solution <i class="fas fa-cogs"></i></button>
-                    </div>
+                 <h2>AI Problem Solver</h2>
+                 <p class="section-subtitle">Stuck on a specific problem? Type it here for a step-by-step solution from our AI.</p>
+                 <div class="solver-area">
+                    <textarea id="ai-solver-textarea" placeholder="e.g., 'Factor the expression x^2 - 5x + 6'"></textarea>
+                    <button id="ai-solver-btn" class="btn btn-primary">Solve with AI <i class="fas fa-cogs"></i></button>
+                </div>
+                <div id="ai-solver-result" class="ai-solver-result" style="display: none;">
+                    <div id="solver-loader" class="loader" style="display: none;"></div>
+                    <div id="solver-solution"></div>
                 </div>
             </div>
         </section>
@@ -88,3 +77,4 @@
     <script src="/static/js/script.js"></script>
 </body>
 </html>
+

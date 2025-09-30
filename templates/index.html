@@ -14,9 +14,14 @@
             <ul class="nav-links">
                 <li><a href="/">Home</a></li>
                 <li><a href="/tools">Tools</a></li>
-                <li><a href="/login">Login</a></li>
-                <li><a href="/register">Register</a></li>
-                <li><a href="/#about">About</a></li>
+                <li><a href="/about">About</a></li>
+                {% if user %}
+                    <li><a href="/dashboard">Dashboard</a></li>
+                    <li><a href="/logout">Logout</a></li>
+                {% else %}
+                    <li><a href="/login">Login</a></li>
+                    <li><a href="/register">Register</a></li>
+                {% endif %}
             </ul>
             <button id="theme-toggle" class="theme-toggle-btn">
                 <i class="fas fa-sun"></i>
@@ -44,7 +49,7 @@
         </div>
     </section>
 
-    <section id="about" class="tools">
+    <section id="features" class="tools">
          <div class="container">
             <h2>Why Choose Us?</h2>
             <div class="tool-grid">
@@ -75,3 +80,4 @@
     <script src="/static/js/script.js"></script>
 </body>
 </html>
+
