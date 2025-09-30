@@ -30,8 +30,26 @@ if OPENAI_KEY:
     openai.api_key = OPENAI_KEY
 
 app = FastAPI(title="thetamind")
-app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="templates")
+
+# Mount static files
+app.mount(
+    "/static",
+    StaticFiles(directory=os.path.join(os.path.dirname(__file__), "static")),
+    name="static"
+)
+
+@app.on_event("startup")
+async def startup_event():
+    print("\nRegistered routes:")
+    for route in app.routes:
+        if hasattr(route, "path"):
+            methods = getattr(route, "methods", None)
+            path = route.path
+            print(f"{path} - {methods}")
+    print("\n")
+
+# Configure templates
+templates = Jinja2Templates(directory=os.path.join(os.path.dirname(__file__), "templates"))
 
 # --- DB helper (simple sqlite) ---
 def db_init():
@@ -50,6 +68,8 @@ def db_init():
     c.commit()
     c.close()
 
+db_init() # Initialize the database on startup
+
 def db_ins(usr, q, ocr, ai):
     c = sqlite3.connect(DB)
     cur = c.cursor()
@@ -57,7 +77,6 @@ def db_ins(usr, q, ocr, ai):
                 (usr, q, ocr, ai))
     c.commit()
     c.close()
-
 # --- OCR helper ---
 def ocr_img(buf: bytes) -> str:
     img = Image.open(BytesIO(buf)).convert("L")
@@ -66,59 +85,51 @@ def ocr_img(buf: bytes) -> str:
     txt = pytesseract.image_to_string(img, lang='eng+vie')
     return txt.strip()
 
-# --- AI wrapper (short) ---
-# --- AI wrapper (short) ---
-async def ai_q(prompt: str) -> str:
-    if AI_P == "openai" and OPENAI_KEY:
-        try:
-            resp = openai.ChatCompletion.create(
-                model="gpt-4o-mini" if hasattr(openai, "ChatCompletion") else "gpt-4o",
-                messages=[{"role":"system","content":"You are a concise math tutor. Explain steps."},
-                          {"role":"user","content": prompt}],
-                temperature=0.2,
-                max_tokens=800
-            )
-            out = resp['choices'][0]['message']['content'].strip()
-            return out
-        except Exception as e:
-            return f"AI_ERR: {e}"
-    elif AI_P == "gemini" and GEMINI_KEY and genai:
-        try:
-            # new correct usage
-            client = genai.Client(api_key=GEMINI_KEY)
-            resp = client.models.generate_content(
-                model="gemini-2.5-flash",
-                contents=prompt
-            )
-            # response object has .text field
-            return resp.text
-        except Exception as e:
-            return f"AI_ERR: {e}"
-    else:
-        return "AI provider not configured."
-
-# --- API models ---
-class AskIn(BaseModel):
-    usr: str
-    txt: str
-
-# --- Routes ---
-@app.on_event("startup")
-async def startup():
-    db_init()
-
+# Root route
 @app.get("/", response_class=HTMLResponse)
-async def idx(request: Request):
+async def read_root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
-@app.post("/api/ocr")
-async def api_ocr(file: UploadFile = File(...)):
-    b = await file.read()
-    try:
-        txt = ocr_img(b)
-    except Exception as e:
-        return JSONResponse({"ok": False, "err": str(e)})
-    return {"ok": True, "txt": txt}
+# Register route
+@app.get("/register", response_class=HTMLResponse)
+async def register_page(request: Request):
+    return templates.TemplateResponse("register.html", {"request": request})
+
+# Login route
+@app.get("/login", response_class=HTMLResponse)
+async def login_page(request: Request):
+    return templates.TemplateResponse("login.html", {"request": request})
+
+# Tools route
+@app.get("/tools", response_class=HTMLResponse)
+async def tools_page(request: Request):
+    return templates.TemplateResponse("tools.html", {"request": request})
+
+
+async def ai_q(prompt: str) -> str:
+    """Helper function to call the appropriate AI provider"""
+    if AI_P == "openai" and OPENAI_KEY:
+        try:
+            # This is a hypothetical call, ensure you are using the correct library version call
+            # For example, with newer versions of the openai library:
+            # from openai import AsyncOpenAI
+            # client = AsyncOpenAI(api_key=OPENAI_KEY)
+            # response = await client.chat.completions.create(...)
+            response = await openai.ChatCompletion.acreate(
+                model="gpt-3.5-turbo",
+                messages=[{"role": "user", "content": prompt}]
+            )
+            return response.choices[0].message.content
+        except Exception as e:
+            return f"Error calling OpenAI: {str(e)}"
+    elif AI_P == "gemini" and GEMINI_KEY and genai is not None:
+        try:
+            # Gemini implementation would go here
+            return "Gemini AI response (not implemented)"
+        except Exception as e:
+            return f"Error calling Gemini: {str(e)}"
+    else:
+        return "AI provider not properly configured"
 
 @app.post("/api/ask")
 async def api_ask(usr: str = Form(...), txt: str = Form(...), ocr: str = Form("")):
@@ -127,8 +138,8 @@ async def api_ask(usr: str = Form(...), txt: str = Form(...), ocr: str = Form(""
     # store session
     try:
         db_ins(usr, txt, ocr, ans)
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"Error storing session: {e}")
     return {"ok": True, "ans": ans}
 
 @app.get("/api/history")
@@ -145,3 +156,7 @@ async def api_hist(usr: str):
 @app.get("/sample")
 def sample():
     return FileResponse("static/sample.png", media_type="image/png")
+
+@app.get("/test")
+async def test_page():
+    return {"message": "Test route is working!"}

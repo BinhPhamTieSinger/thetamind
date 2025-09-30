@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - ThetaMind</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="logo">θ-Mind</a>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/tools">Tools</a></li>
+                <li><a href="/login">Login</a></li>
+                <li><a href="/register">Register</a></li>
+                <li><a href="/#about">About</a></li>
+            </ul>
+             <button id="theme-toggle" class="theme-toggle-btn">
+                <i class="fas fa-sun"></i>
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </nav>
+    <div class="auth-container">
+        <div class="auth-form">
+            <h2>Login to ThetaMind</h2>
+            <form>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+            <p>Don't have an account? <a href="/register">Register here</a></p>
+        </div>
+    </div>
+    <script src="/static/js/script.js"></script>
+</body>
+</html>
