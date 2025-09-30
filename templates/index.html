@@ -1,0 +1,37 @@
+<!-- templates/index.html -->
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>thetamind — AI Math Tutor</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div id="app">
+    <h1>ThetaMind — AI Math Tutor</h1>
+    <div class="row">
+      <div class="col">
+        <label>Usr</label>
+        <input id="usr" value="guest" />
+        <label>Type / paste math</label>
+        <textarea id="txt" placeholder="e.g. solve x^2 - 5x + 6 = 0"></textarea>
+        <div class="btns">
+          <button id="ask">Ask AI</button>
+          <button id="upbtn">Upload pic (OCR)</button>
+          <input id="f" type="file" accept="image/*" style="display:none"/>
+        </div>
+      </div>
+      <div class="col">
+        <label>AI answer</label>
+        <pre id="out">No output yet</pre>
+      </div>
+    </div>
+
+    <div class="hist">
+      <h3>History</h3>
+      <ul id="hist"></ul>
+    </div>
+  </div>
+  <script src="/static/app.js"></script>
+</body>
+</html>

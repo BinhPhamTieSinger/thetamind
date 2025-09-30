@@ -1,0 +1,12 @@
+fastapi
+uvicorn[standard]
+aiofiles
+python-multipart
+pillow
+pytesseract
+openai
+google-genai
+sqlalchemy
+databases
+python-dotenv
+jinja2
