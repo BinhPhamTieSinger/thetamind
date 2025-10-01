@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation - ThetaMind</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+         <div class="container">
+            <a href="/" class="logo">θ-Mind</a>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/tools">Tools</a></li>
+                <li><a href="/documentation" class="active">Documentation</a></li>
+                <li><a href="/about">About</a></li>
+                 {% if user %}
+                    <li><a href="/dashboard">Dashboard</a></li>
+                    <li><a href="/logout">Logout</a></li>
+                {% else %}
+                    <li><a href="/login">Login</a></li>
+                {% endif %}
+            </ul>
+            <button id="theme-toggle" class="theme-toggle-btn"><i class="fas fa-sun"></i><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <div class="docs-wrapper">
+        <aside class="docs-sidebar">
+            <nav>
+                <ul>
+                    <li><a href="#introduction">Introduction</a></li>
+                    <li><a href="#getting-started">Getting Started</a></li>
+                    <li><a href="#core-features">Core Features</a>
+                        <ul>
+                            <li><a href="#feature-paths">Learning Paths</a></li>
+                            <li><a href="#feature-ai-tutor">AI Tutor</a></li>
+                            <li><a href="#feature-gamification">Gamification</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#account">Your Account</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <main class="docs-content">
+            <section id="introduction">
+                <h1>Welcome to ThetaMind</h1>
+                <p>ThetaMind is a next-generation, AI-powered platform designed to make learning mathematics intuitive, engaging, and personalized. Our mission is to transform math education from a challenge into an adventure.</p>
+            </section>
+            <section id="getting-started">
+                <h2>Getting Started</h2>
+                <p>To begin your journey with ThetaMind, you first need an account. You can create one using a traditional email and password or, for convenience, sign in instantly using your Google account.</p>
+                <ol>
+                    <li>Navigate to the <a href="/register">Register</a> page.</li>
+                    <li>Choose your preferred sign-up method.</li>
+                    <li>Once logged in, head over to the <a href="/tools">Tools</a> page to see the available learning paths.</li>
+                </ol>
+            </section>
+            <section id="core-features">
+                <h2>Core Features</h2>
+                <h3 id="feature-paths">Learning Paths</h3>
+                <p>Our core learning experience is built around gamified Learning Paths. For each major topic, like Algebra, we provide a visual graph of interconnected concepts. You start at the beginning and unlock new lessons and quizzes as you prove your mastery.</p>
+                <h3 id="feature-ai-tutor">AI Tutor</h3>
+                <p>Every lesson, quiz, and explanation on ThetaMind is powered by a sophisticated AI. This ensures that the content is not only accurate but also tailored to be easily understandable. When you get a quiz answer wrong, the AI provides constructive feedback to help you understand your mistake, not just see the right answer.</p>
+                <h3 id="feature-gamification">Gamification</h3>
+                <p>We believe learning should be fun. By representing topics as a "skill tree," you get the satisfying feeling of leveling up. Watching the nodes light up as you complete them provides a clear, visual representation of your progress and mastery.</p>
+            </section>
+             <section id="account">
+                <h2>Your Account</h2>
+                <p>Your account is your personal hub. The <a href="/dashboard">Dashboard</a> page will show your statistics, including your accuracy on different topics and your overall progress. All your completed nodes in the learning paths are saved to your account, so you can always pick up right where you left off.</p>
+            </section>
+        </main>
+    </div>
+    
+    <script src="/static/js/script.js"></script>
+</body>
+</html>

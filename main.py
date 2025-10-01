@@ -13,6 +13,9 @@ from passlib.context import CryptContext
 from typing import Optional
 from starlette.requests import Request
 from starlette.responses import Response
+from authlib.integrations.starlette_client import OAuth
+from starlette.middleware.sessions import SessionMiddleware
+from urllib.parse import quote, unquote
 
 load_dotenv()
 
@@ -21,42 +24,54 @@ DB = "thetamind.db"
 AI_P = os.getenv("AI_PROVIDER", "openai")
 OPENAI_KEY = os.getenv("OPENAI_API_KEY", "")
 GEMINI_KEY = os.getenv("GEMINI_API_KEY", "")
+SECRET_KEY = os.getenv("SECRET_KEY", "a_very_secret_key")
 
 # This is a fallback for when OPENAI is not configured.
 # We will use a mock AI response.
-if AI_P == "openai":
-    IS_AI_CONFIGURED = bool(OPENAI_KEY)
+IS_AI_CONFIGURED = bool(OPENAI_KEY)
 
-    if IS_AI_CONFIGURED:
-        import openai
-        openai.api_key = OPENAI_KEY
-elif AI_P == "gemini":
-    IS_AI_CONFIGURED = bool(GEMINI_KEY)
-    if IS_AI_CONFIGURED:
-        from google import genai
-
+if IS_AI_CONFIGURED:
+    import openai
+    openai.api_key = OPENAI_KEY
 
 # Password Hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 app = FastAPI(title="thetamind")
+app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
+
+oauth = OAuth()
+oauth.register(
+    name='google',
+    server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
+    client_id=os.getenv('GOOGLE_CLIENT_ID'),
+    client_secret=os.getenv('GOOGLE_CLIENT_SECRET'),
+    client_kwargs={'scope': 'openid email profile'}
+)
 
 # --- Database Initialization ---
 def db_init():
     conn = sqlite3.connect(DB)
     cur = conn.cursor()
-    # Users table
     cur.execute("""
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT UNIQUE NOT NULL,
         email TEXT UNIQUE NOT NULL,
-        hashed_password TEXT NOT NULL
-    )
-    """)
-    # Quiz History table
+        hashed_password TEXT,
+        oauth_provider TEXT,
+        oauth_id TEXT
+    )""")
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS user_progress (
+        user_id INTEGER NOT NULL,
+        node_id TEXT NOT NULL,
+        completed_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (user_id, node_id),
+        FOREIGN KEY (user_id) REFERENCES users (id)
+    )""")
     cur.execute("""
     CREATE TABLE IF NOT EXISTS quiz_history (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -87,8 +102,9 @@ def get_user(username: str):
     return user
 
 def get_current_user(request: Request):
-    username = request.cookies.get("thetamind_user")
-    if username:
+    encoded_username = request.cookies.get("thetamind_user")
+    if encoded_username:
+        username = unquote(encoded_username)
         return get_user(username)
     return None
 
@@ -99,37 +115,19 @@ def get_password_hash(password):
     return pwd_context.hash(password)
 
 # --- AI Interaction ---
-def clean_response(response: str) -> str:
-    return response.strip().strip('```json').strip('```')
-
-async def query_ai(prompt: str) -> str:
-    """Helper function to call the appropriate AI provider"""
-    if IS_AI_CONFIGURED:
-        if AI_P == "openai":
-            try:
-                response = await openai.ChatCompletion.acreate(
-                    model="gpt-4-turbo",
-                    messages=[{"role": "user", "content": prompt}]
-                )
-                return response.choices[0].message.content
-            except Exception as e:
-                print(f"Error calling OpenAI: {e}")
-                return f"AI_ERR: {e}"
-        elif AI_P == "gemini" and GEMINI_KEY and genai:
-            try:
-                client = genai.Client(api_key=GEMINI_KEY)
-                resp = client.models.generate_content(
-                    model="gemini-2.5-flash",
-                    contents=prompt
-                )
-                return resp.text
-            except Exception as e:
-                return f"AI_ERR: {e}"
-
 async def ai_q(prompt: str) -> str:
     """Helper function to call the appropriate AI provider"""
     if IS_AI_CONFIGURED:
-        return await query_ai(prompt)
+        try:
+            response = await openai.ChatCompletion.acreate(
+                model="gpt-4-turbo",
+                messages=[{"role": "user", "content": prompt}]
+            )
+            return response.choices[0].message.content
+        except Exception as e:
+            print(f"Error calling OpenAI: {e}")
+            # Return error in a JSON format that the frontend can handle
+            return json.dumps({"error": f"AI provider error: {e}"})
 
     # Fallback for demonstration if no API key is set
     await asyncio.sleep(1)
@@ -144,10 +142,6 @@ async def ai_q(prompt: str) -> str:
             "is_correct": True,
             "feedback": "Great job! Your method of using the distributive property (FOIL) is perfect for this problem. You correctly multiplied the terms and combined the like terms to arrive at the correct answer.",
             "smarter_way": "For this type of problem, the FOIL method is the most direct and efficient way to solve it. Keep up the excellent work!"
-        })
-    else:
-        return json.dumps({
-            "error": "something something prompt failure here"
         })
     return json.dumps({"error": "AI provider not configured."})
 
@@ -164,10 +158,8 @@ async def register_page(request: Request):
 
 @app.post("/register")
 async def register_user(request: Request, username: str = Form(...), email: str = Form(...), password: str = Form(...)):
-    print(username, email, password)
     hashed_password = get_password_hash(password)
     conn = sqlite3.connect(DB)
-    print(conn)
     cur = conn.cursor()
     try:
         cur.execute("INSERT INTO users (username, email, hashed_password) VALUES (?, ?, ?)",
@@ -186,12 +178,48 @@ async def login_page(request: Request):
 @app.post("/login")
 async def login_user(request: Request, username: str = Form(...), password: str = Form(...)):
     user = get_user(username)
-    print(user)
     if not user or not verify_password(password, user["hashed_password"]):
         return templates.TemplateResponse("login.html", {"request": request, "error": "Invalid username or password"})
     
+    encoded_username = quote(username)
     response = RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
-    response.set_cookie(key="thetamind_user", value=username, httponly=True)
+    response.set_cookie(key="thetamind_user", value=encoded_username, httponly=True)
+    return response
+
+@app.get('/google-login')
+async def google_login(request: Request):
+    redirect_uri = request.url_for('auth')
+    print(redirect_uri)
+    return await oauth.google.authorize_redirect(request, str(redirect_uri))
+
+@app.get('/auth')
+async def auth(request: Request):
+    token = await oauth.google.authorize_access_token(request)
+    user_info = token.get('userinfo')
+    if user_info:
+        conn = sqlite3.connect(DB)
+        cur = conn.cursor()
+        cur.row_factory = sqlite3.Row
+        
+        # Check if user already exists in the database
+        user = cur.execute("SELECT * FROM users WHERE oauth_provider = 'google' AND oauth_id = ?", (user_info['sub'],)).fetchone()
+        
+        # If user doesn't exist, insert with a dummy password
+        if not user:
+            dummy_password = "google_oauth_dummy_password"  # You can use any string here
+            hashed_password = get_password_hash(dummy_password)
+            cur.execute("INSERT INTO users (username, email, oauth_provider, oauth_id, hashed_password) VALUES (?, ?, 'google', ?, ?)",
+                        (user_info['name'], user_info['email'], user_info['sub'], hashed_password))
+            conn.commit()
+        user = cur.execute("SELECT * FROM users WHERE email=?", (user_info['email'],)).fetchone()
+        conn.close()
+
+        user_dict = dict(user)
+        encoded_username = quote(user_dict['username'])
+        response = RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
+        response.set_cookie(key="thetamind_user", value=encoded_username, httponly=True)
+        return response
+    
     return response
 
 @app.get("/logout")
@@ -241,8 +269,6 @@ async def generate_quiz(request: Request, topic: str = Form(...), difficulty: st
     
     prompt = f"Generate a single math quiz question on the topic of '{topic}' with a difficulty of '{difficulty}'. Format the response as a JSON object with keys: 'question', 'solution', 'difficulty'."
     ai_response = await ai_q(prompt)
-    print(ai_response)
-    ai_response = clean_response(ai_response)
     try:
         return JSONResponse(content=json.loads(ai_response))
     except (json.JSONDecodeError, TypeError):
@@ -262,7 +288,6 @@ async def evaluate_answer(request: Request, question: str = Form(...), user_solu
     Analyze the student's process. Identify misconceptions or errors.
     Provide your evaluation as a JSON object with keys: "is_correct" (boolean), "feedback" (constructive paragraph), "smarter_way" (alternative method or encouragement)."""
     ai_response = await ai_q(prompt)
-    ai_response = clean_response(ai_response)
 
     try:
         evaluation = json.loads(ai_response)
