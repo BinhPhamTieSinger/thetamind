@@ -49,7 +49,7 @@ body.light-mode .theme-toggle-btn .fa-sun { display: block; } body.light-mode .t
 .banner { min-height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; position: relative; overflow: hidden; background: linear-gradient(rgba(13, 13, 43, 0.85), rgba(13, 13, 43, 0.95)); }
 #matrix-background { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
 .banner h1 { font-family: var(--font-heading); font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 700; }
-.animated-title { background: linear-gradient(90deg, var(--accent-color), #fff, var(--secondary-accent), var(--accent-color)); -webkit-background-clip: text; background-clip: text; color: transparent; animation: gradient-flow 8s linear infinite; background-size: 400% 100%; }
+.animated-title { background: linear-gradient(90deg, var(--accent-color), #fff, var(--secondary-accent), var(--accent-color)); -webkit-background-clip: text; background-clip: text; color: transparent; animation: gradient-flow 10s linear infinite; background-size: 400% 100%; }
 @keyframes gradient-flow { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
 .banner p { font-size: clamp(1.1rem, 2.5vw, 1.5rem); max-width: 700px; margin: 1rem auto 2rem; }
 .banner-buttons { display: flex; justify-content: center; gap: 1rem; }
@@ -85,7 +85,7 @@ section h2 { font-family: var(--font-heading); font-size: 2.5rem; text-align: ce
 .topic-card:not(.disabled):hover { transform: translateY(-10px) scale(1.02); box-shadow: 0 15px 30px var(--shadow-color); border-color: var(--accent-color); }
 .topic-card.disabled { opacity: 0.5; cursor: not-allowed; }
 .topic-card.disabled .topic-content span { display: block; font-size: 0.8rem; background: var(--secondary-accent); color: white; padding: 2px 8px; border-radius: 10px; margin-top: 5px; }
-.topic-icon { font-size: 2.5rem; margin-right: 1.5rem; width: 60px; height: 60px; display: flex; justify-content: center; align-items: center; border-radius: 50%; }
+.topic-icon { font-size: 2.5rem; margin-right: 1.5rem; width: 70px; height: 60px; display: flex; justify-content: center; align-items: center; border-radius: 50%; }
 .algebra-icon { background: linear-gradient(45deg, #00f7ff, #008cff); color: white; }
 .geometry-icon { background: linear-gradient(45deg, #ff00ff, #ff008c); color: white; }
 .calculus-icon { background: linear-gradient(45deg, #f7ff00, #ff8c00); color: white; }
