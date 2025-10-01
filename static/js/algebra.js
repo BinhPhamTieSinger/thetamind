@@ -1,3 +1,11 @@
+function md2html(md) {
+    const raw = marked.parse(md);
+    const clean = DOMPurify.sanitize(raw);
+    console.log(raw);
+    console.log(md);
+    return clean;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const practiceBtns = document.querySelectorAll('.practice-btn');
     const learnBtns = document.querySelectorAll('.learn-btn');
@@ -55,9 +63,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await response.json();
                 
                 if(data.error) {
-                     lessonArea.innerHTML = `<p style="color: var(--error-color);">${data.error}</p>`;
+
+                     lessonArea.innerHTML = `<p style="color: var(--error-color);">${md2html(data.error)}</p>`;
                 } else {
-                     lessonArea.innerHTML = `<p>${data.explanation.replace(/\n/g, '<br>')}</p>`;
+                     lessonArea.innerHTML = `<p>${md2html(data.lesson)}</p>`;
                 }
             } catch (e) {
                  lessonArea.innerHTML = `<p style="color: var(--error-color);">Failed to load lesson.</p>`;
@@ -101,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             currentQuizData = await response.json();
             if (currentQuizData.error) throw new Error(currentQuizData.error);
-            questionText.textContent = currentQuizData.question;
+            questionText.innerHTML = md2html(currentQuizData.question);
         } catch (error) {
             questionText.textContent = `Failed to load question: ${error.message}`;
         } finally {
@@ -139,10 +148,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function displayFeedback(evaluation) {
         if (evaluation.error) {
-            feedbackArea.innerHTML = `<h3 class="feedback-incorrect">Error</h3><p>${evaluation.error}</p>`;
+            feedbackArea.innerHTML = `<h3 class="feedback-incorrect">Error</h3><p>${md2html(evaluation.error)}</p>`;
         } else {
             const resultTitle = evaluation.is_correct ? '<h3 class="feedback-correct"><i class="fas fa-check-circle"></i> Correct!</h3>' : '<h3 class="feedback-incorrect"><i class="fas fa-times-circle"></i> Needs Review</h3>';
-            feedbackArea.innerHTML = `${resultTitle}<p><strong>Feedback:</strong> ${evaluation.feedback}</p><hr><p><strong>Alternative Method:</strong> ${evaluation.smarter_way}</p>`;
+            feedbackArea.innerHTML = `${resultTitle}<p><strong>Feedback:</strong> ${md2html(evaluation.feedback)}</p><hr><p><strong>Alternative Method:</strong> ${md2html(evaluation.smarter_way)}</p>`;
         }
         feedbackArea.style.display = 'block';
     }

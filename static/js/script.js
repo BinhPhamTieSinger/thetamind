@@ -226,19 +226,37 @@ document.addEventListener('DOMContentLoaded', () => {
         const characters = '0123456789ABCDEFΓΔΘΛΞΠΣΦΨΩαβγδεζηθικλμνξπρστυφχψω';
 
         function drawMatrix() {
-            ctx.fillStyle = 'rgba(13, 13, 43, 0.05)';
+            // Background fade
+            if (body.classList.contains('light-mode')) {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.15)'; // soft white overlay
+            } else {
+                ctx.fillStyle = 'rgba(13, 13, 43, 0.05)';
+            }
             ctx.fillRect(0, 0, width, height);
-            ctx.fillStyle = '#00f7ff';
+        
+            // Text style
+            if (body.classList.contains('light-mode')) {
+                ctx.fillStyle = '#0088cc'; // bright pastel cyan
+                ctx.shadowColor = 'rgba(0, 136, 204, 0.5)'; 
+                ctx.shadowBlur = 6; 
+            } else {
+                ctx.fillStyle = '#00f7ff';
+                ctx.shadowColor = 'transparent';
+                ctx.shadowBlur = 0;
+            }
             ctx.font = '15px monospace';
+        
             for (let i = 0; i < drops.length; i++) {
                 const text = characters.charAt(Math.floor(Math.random() * characters.length));
                 ctx.fillText(text, i * 20, drops[i] * 20);
+        
                 if (drops[i] * 20 > height && Math.random() > 0.975) {
                     drops[i] = 0;
                 }
                 drops[i]++;
             }
         }
+        
         let interval = setInterval(drawMatrix, 40);
         window.addEventListener('resize', () => {
              width = canvas.width = window.innerWidth;
