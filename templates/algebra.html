@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algebra Path - ThetaMind</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="logo">θ-Mind</a>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/tools">Tools</a></li>
+                <li><a href="/about">About</a></li>
+                {% if user %}
+                    <li><a href="/dashboard">Dashboard</a></li>
+                    <li><a href="/logout">Logout</a></li>
+                {% else %}
+                    <li><a href="/login">Login</a></li>
+                    <li><a href="/register">Register</a></li>
+                {% endif %}
+            </ul>
+            <button id="theme-toggle" class="theme-toggle-btn">
+                <i class="fas fa-sun"></i>
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <main class="page-content">
+        <section id="algebra-path">
+            <div class="container">
+                <h2>Learning Path: Algebra</h2>
+                <p class="section-subtitle">Progress through the lessons sequentially. Master each concept before moving to the next.</p>
+                
+                <div class="learning-path">
+                    <div class="path-step">
+                        <div class="step-icon"><i class="fas fa-cubes"></i></div>
+                        <div class="step-content">
+                            <h3>1. Foundations of Algebra</h3><p>Variables, expressions, and the order of operations.</p>
+                            <div class="step-actions">
+                                <button class="btn btn-secondary learn-btn" data-topic="Foundations of Algebra">Learn</button>
+                                <button class="btn btn-primary practice-btn" data-topic="Foundations of Algebra">Practice</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="path-step">
+                        <div class="step-icon"><i class="fas fa-equals"></i></div>
+                        <div class="step-content">
+                            <h3>2. Solving Linear Equations</h3><p>Master one-step, two-step, and multi-step equations.</p>
+                             <div class="step-actions">
+                                <button class="btn btn-secondary learn-btn" data-topic="Solving Linear Equations">Learn</button>
+                                <button class="btn btn-primary practice-btn" data-topic="Solving Linear Equations">Practice</button>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="path-step">
+                        <div class="step-icon"><i class="fas fa-less-than-equal"></i></div>
+                        <div class="step-content">
+                            <h3>3. Inequalities</h3><p>Graphing and solving inequalities on a number line.</p>
+                             <div class="step-actions">
+                                <button class="btn btn-secondary learn-btn" data-topic="Inequalities">Learn</button>
+                                <button class="btn btn-primary practice-btn" data-topic="Inequalities">Practice</button>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="path-step">
+                        <div class="step-icon"><i class="fas fa-superscript"></i></div>
+                        <div class="step-content">
+                            <h3>4. Polynomials</h3><p>Operations with polynomials and factoring techniques.</p>
+                             <div class="step-actions">
+                                <button class="btn btn-secondary learn-btn" data-topic="Polynomials and Factoring">Learn</button>
+                                <button class="btn btn-primary practice-btn" data-topic="Polynomials and Factoring">Practice</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Multi-purpose AI Modal -->
+        <div id="ai-modal" class="modal" style="display: none;">
+            <div class="modal-content quiz-modal-content">
+                <span class="close-btn">&times;</span>
+                <div id="modal-title-area">
+                    <h2 id="modal-title"></h2>
+                </div>
+                <div id="modal-loader" class="loader" style="display: none;"></div>
+                
+                <!-- Lesson Content Area -->
+                <div id="lesson-content-area" style="display: none;"></div>
+
+                <!-- Quiz Content Area -->
+                <div id="quiz-content-area" style="display: none;">
+                    <div class="quiz-controls">
+                         <div class="control-group">
+                            <label>Topic:</label>
+                            <span id="quiz-topic-text"></span>
+                        </div>
+                        <div class="control-group">
+                            <label for="difficulty-select">Difficulty:</label>
+                            <select id="difficulty-select">
+                                <option value="Easy">Easy</option><option value="Medium">Medium</option><option value="Hard">Hard</option>
+                            </select>
+                        </div>
+                        <button id="generate-quiz-btn" class="btn btn-primary"><i class="fas fa-sync-alt"></i> New Problem</button>
+                    </div>
+                    <div id="quiz-content">
+                       <div class="quiz-question-container"><p id="question-text"></p></div>
+                       <div class="quiz-solution-container">
+                           <textarea id="user-solution-textarea" placeholder="Explain your steps here..."></textarea>
+                           <button id="submit-answer-btn" class="btn btn-secondary">Evaluate My Answer</button>
+                       </div>
+                    </div>
+                    <div id="feedback-area" class="feedback-area" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer class="footer"><div class="container"><p>&copy; 2024 ThetaMind. All rights reserved.</p></div></footer>
+    <script src="/static/js/algebra.js"></script>
+    <script src="/static/js/script.js"></script>
+</body>
+</html>
+
