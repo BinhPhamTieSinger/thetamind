@@ -263,6 +263,11 @@ async def algebra_page(request: Request):
         return RedirectResponse(url="/login")
     return templates.TemplateResponse("algebra.html", {"request": request, "user": user})
 
+@app.get("/documentation", response_class=HTMLResponse)
+async def route_documentation(request: Request):
+    user = get_current_user(request)
+    return templates.TemplateResponse("documentation.html", {"request": request, "user": user})
+
 @app.get("/dashboard", response_class=HTMLResponse)
 async def dashboard(request: Request):
     user = get_current_user(request)
@@ -276,7 +281,10 @@ async def dashboard(request: Request):
     stats = cur.fetchall()
     conn.close()
 
-    return templates.TemplateResponse("dashboard.html", {"request": request, "user": user, "stats": stats})
+    stats_dict = [dict(row) for row in stats]
+    
+    return templates.TemplateResponse("dashboard.html", {"request": request, "user": user, "stats": stats_dict})
+
 
 @app.get("/about", response_class=HTMLResponse)
 async def about_page(request: Request):
