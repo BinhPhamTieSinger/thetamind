@@ -414,7 +414,7 @@ section h2 {
     font-size: 2.5rem;
     margin-right: 1.5rem;
     width: 60px;
-    height: 60px;
+    height: 70px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -422,17 +422,17 @@ section h2 {
 }
 
 .algebra-icon {
-    background: linear-gradient(45deg, #00f7ff, #008cff);
+    /* background: linear-gradient(45deg, #00f7ff, #008cff); */
     color: white;
 }
 
 .geometry-icon {
-    background: linear-gradient(45deg, #ff00ff, #ff008c);
+    /* background: linear-gradient(45deg, #ff00ff, #ff008c); */
     color: white;
 }
 
 .calculus-icon {
-    background: linear-gradient(45deg, #f7ff00, #ff8c00);
+    /* background: linear-gradient(45deg, #f7ff00, #ff8c00); */
     color: white;
 }
 
