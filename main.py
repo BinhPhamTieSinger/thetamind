@@ -28,11 +28,16 @@ SECRET_KEY = os.getenv("SECRET_KEY", "a_very_secret_key")
 
 # This is a fallback for when OPENAI is not configured.
 # We will use a mock AI response.
-IS_AI_CONFIGURED = bool(OPENAI_KEY)
+if AI_P == "openai":
+    IS_AI_CONFIGURED = bool(OPENAI_KEY)
 
-if IS_AI_CONFIGURED:
-    import openai
-    openai.api_key = OPENAI_KEY
+    if IS_AI_CONFIGURED:
+        import openai
+        openai.api_key = OPENAI_KEY
+elif AI_P == "gemini":
+    IS_AI_CONFIGURED = bool(GEMINI_KEY)
+    if IS_AI_CONFIGURED:
+        from google import genai
 
 # Password Hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -114,20 +119,38 @@ def verify_password(plain_password, hashed_password):
 def get_password_hash(password):
     return pwd_context.hash(password)
 
+def clean_response(response: str) -> str:
+    return response.strip().strip('```json').strip('```')
+
+async def query_ai(prompt: str) -> str:
+    """Helper function to call the appropriate AI provider"""
+    if IS_AI_CONFIGURED:
+        if AI_P == "openai":
+            try:
+                response = await openai.ChatCompletion.acreate(
+                    model="gpt-4-turbo",
+                    messages=[{"role": "user", "content": prompt}]
+                )
+                return response.choices[0].message.content
+            except Exception as e:
+                print(f"Error calling OpenAI: {e}")
+                return f"AI_ERR: {e}"
+        elif AI_P == "gemini" and GEMINI_KEY and genai:
+            try:
+                client = genai.Client(api_key=GEMINI_KEY)
+                resp = client.models.generate_content(
+                    model="gemini-2.5-flash",
+                    contents=prompt
+                )
+                return resp.text
+            except Exception as e:
+                return f"AI_ERR: {e}"
+
 # --- AI Interaction ---
 async def ai_q(prompt: str) -> str:
     """Helper function to call the appropriate AI provider"""
     if IS_AI_CONFIGURED:
-        try:
-            response = await openai.ChatCompletion.acreate(
-                model="gpt-4-turbo",
-                messages=[{"role": "user", "content": prompt}]
-            )
-            return response.choices[0].message.content
-        except Exception as e:
-            print(f"Error calling OpenAI: {e}")
-            # Return error in a JSON format that the frontend can handle
-            return json.dumps({"error": f"AI provider error: {e}"})
+        return await query_ai(prompt)
 
     # Fallback for demonstration if no API key is set
     await asyncio.sleep(1)
@@ -269,6 +292,7 @@ async def generate_quiz(request: Request, topic: str = Form(...), difficulty: st
     
     prompt = f"Generate a single math quiz question on the topic of '{topic}' with a difficulty of '{difficulty}'. Format the response as a JSON object with keys: 'question', 'solution', 'difficulty'."
     ai_response = await ai_q(prompt)
+    ai_response = clean_response(ai_response)
     try:
         return JSONResponse(content=json.loads(ai_response))
     except (json.JSONDecodeError, TypeError):
@@ -288,6 +312,7 @@ async def evaluate_answer(request: Request, question: str = Form(...), user_solu
     Analyze the student's process. Identify misconceptions or errors.
     Provide your evaluation as a JSON object with keys: "is_correct" (boolean), "feedback" (constructive paragraph), "smarter_way" (alternative method or encouragement)."""
     ai_response = await ai_q(prompt)
+    ai_response = clean_response(ai_response)
 
     try:
         evaluation = json.loads(ai_response)
