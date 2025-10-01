@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Tools - ThetaMind</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="logo">θ-Mind</a>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/tools" class="active">Tools</a></li>
+                <li><a href="/about">About</a></li>
+                {% if user %}
+                    <li><a href="/dashboard">Dashboard</a></li>
+                    <li><a href="/logout">Logout</a></li>
+                {% else %}
+                    <li><a href="/login">Login</a></li>
+                    <li><a href="/register">Register</a></li>
+                {% endif %}
+            </ul>
+            <button id="theme-toggle" class="theme-toggle-btn">
+                <i class="fas fa-sun"></i>
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <main class="page-content">
+        <section id="topics" class="topics-section">
+            <div class="container">
+                <h2>Choose Your Path</h2>
+                <p class="section-subtitle">Select a topic to begin your journey with our AI-guided lessons and practice problems.</p>
+                <div class="topics-grid">
+                    <a href="/algebra" class="topic-card">
+                        <div class="topic-icon algebra-icon"><i class="fas fa-square-root-alt"></i></div>
+                        <div class="topic-content"><h3>Algebra</h3><p>Master variables, equations, and functions.</p></div>
+                    </a>
+                    <a href="/geometry" class="topic-card">
+                        <div class="topic-icon geometry-icon"><i class="fas fa-drafting-compass"></i></div>
+                        <div class="topic-content"><h3>Geometry</h3><p>Explore shapes, angles, and spatial reasoning.</p></div>
+                    </a>
+                    <a href="/calculus" class="topic-card">
+                        <div class="topic-icon calculus-icon"><i class="fas fa-infinity"></i></div>
+                        <div class="topic-content"><h3>Calculus</h3><p>Uncover the mathematics of change.</p></div>
+                    </a>
+                </div>
+            </div>
+        </section>
+        
+        <section id="ai-solver" class="ai-solver-section">
+            <div class="container">
+                 <h2>AI Problem Solver</h2>
+                 <p class="section-subtitle">Stuck on a specific problem? Type it here for a step-by-step solution from our AI.</p>
+                 <div class="solver-area">
+                    <textarea id="ai-solver-textarea" placeholder="e.g., 'Factor the expression x^2 - 5x + 6'"></textarea>
+                    <button id="ai-solver-btn" class="btn btn-primary">Solve with AI <i class="fas fa-cogs"></i></button>
+                </div>
+                <div id="ai-solver-result" class="ai-solver-result" style="display: none;">
+                    <div id="solver-loader" class="loader" style="display: none;"></div>
+                    <div id="solver-solution"></div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 ThetaMind. All rights reserved.</p>
+        </div>
+    </footer>
+    <script src="/static/js/script.js"></script>
+</body>
+</html>
+

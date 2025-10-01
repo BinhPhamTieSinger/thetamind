@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - ThetaMind</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="logo">θ-Mind</a>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/tools">Tools</a></li>
+                <li><a href="/about">About</a></li>
+                {% if user %}
+                    <li><a href="/dashboard">Dashboard</a></li>
+                    <li><a href="/logout">Logout</a></li>
+                {% else %}
+                    <li><a href="/login">Login</a></li>
+                    <li><a href="/register">Register</a></li>
+                {% endif %}
+            </ul>
+            <button id="theme-toggle" class="theme-toggle-btn">
+                <i class="fas fa-sun"></i>
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <main class="page-content">
+        <section id="about-us" class="introduction">
+            <div class="container">
+                <h2>Meet the Team</h2>
+                <p>We are a passionate team of developers and innovators dedicated to revolutionizing mathematics education through the power of artificial intelligence.</p>
+            </div>
+        </section>
+
+        <section id="team" class="team-section">
+            <div class="container">
+                <div class="team-grid">
+                    <div class="team-member-card">
+                        <img src="https://placehold.co/200x200/00f7ff/0d0d2b?text=PB" alt="Team Member Pham Quoc Binh">
+                        <h3>Pham Quoc Binh</h3>
+                        <p>Project Lead & AI Architect</p>
+                    </div>
+                    <div class="team-member-card">
+                        <img src="https://placehold.co/200x200/ff00ff/0d0d2b?text=VK" alt="Team Member Bui Quoc Vinh Khang">
+                        <h3>Bui Quoc Vinh Khang</h3>
+                        <p>Backend Specialist</p>
+                    </div>
+                    <div class="team-member-card">
+                        <img src="https://placehold.co/200x200/00f7ff/0d0d2b?text=KH" alt="Team Member Vo Ke Hoai">
+                        <h3>Vo Ke Hoai</h3>
+                        <p>Frontend & UI/UX Designer</p>
+                    </div>
+                    <div class="team-member-card">
+                        <img src="https://placehold.co/200x200/ff00ff/0d0d2b?text=KN" alt="Team Member Vu Nguyen Khanh Ngoc">
+                        <h3>Vu Nguyen Khanh Ngoc</h3>
+                        <p>Database & Systems Engineer</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 ThetaMind. All rights reserved.</p>
+        </div>
+    </footer>
+    <script src="/static/js/script.js"></script>
+</body>
+</html>

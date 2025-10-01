@@ -1,37 +1,83 @@
-<!-- templates/index.html -->
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>thetamind — AI Math Tutor</title>
-  <link rel="stylesheet" href="/static/style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ThetaMind - AI Math Learning</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <div id="app">
-    <h1>ThetaMind — AI Math Tutor</h1>
-    <div class="row">
-      <div class="col">
-        <label>Usr</label>
-        <input id="usr" value="guest" />
-        <label>Type / paste math</label>
-        <textarea id="txt" placeholder="e.g. solve x^2 - 5x + 6 = 0"></textarea>
-        <div class="btns">
-          <button id="ask">Ask AI</button>
-          <button id="upbtn">Upload pic (OCR)</button>
-          <input id="f" type="file" accept="image/*" style="display:none"/>
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="logo">θ-Mind</a>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/tools">Tools</a></li>
+                <li><a href="/about">About</a></li>
+                {% if user %}
+                    <li><a href="/dashboard">Dashboard</a></li>
+                    <li><a href="/logout">Logout</a></li>
+                {% else %}
+                    <li><a href="/login">Login</a></li>
+                    <li><a href="/register">Register</a></li>
+                {% endif %}
+            </ul>
+            <button id="theme-toggle" class="theme-toggle-btn">
+                <i class="fas fa-sun"></i>
+                <i class="fas fa-moon"></i>
+            </button>
         </div>
-      </div>
-      <div class="col">
-        <label>AI answer</label>
-        <pre id="out">No output yet</pre>
-      </div>
-    </div>
+    </nav>
 
-    <div class="hist">
-      <h3>History</h3>
-      <ul id="hist"></ul>
-    </div>
-  </div>
-  <script src="/static/app.js"></script>
+    <header id="home" class="banner">
+        <div id="matrix-background"></div>
+        <div class="container">
+            <h1 class="animated-title">Welcome to ThetaMind</h1>
+            <p>Your personal AI-powered math tutor, unlocking potential one equation at a time.</p>
+            <div class="banner-buttons">
+                <a href="/tools" class="btn btn-primary">Start Now</a>
+                <a href="/register" class="btn btn-secondary">Register Now</a>
+            </div>
+        </div>
+    </header>
+
+    <section id="introduction" class="introduction">
+        <div class="container">
+            <h2>What is ThetaMind?</h2>
+            <p>ThetaMind is a revolutionary platform that integrates cutting-edge AI to help students master mathematics. Our goal is to provide personalized learning paths, identify and correct misconceptions, and make learning math an engaging and rewarding experience.</p>
+        </div>
+    </section>
+
+    <section id="features" class="tools">
+         <div class="container">
+            <h2>Why Choose Us?</h2>
+            <div class="tool-grid">
+                <div class="tool-card">
+                    <i class="fas fa-brain fa-3x"></i>
+                    <h3>AI-Powered Evaluation</h3>
+                    <p>Our AI doesn't just check answers. It analyzes your methods, identifies logical gaps, and provides step-by-step guidance to build a robust understanding.</p>
+                </div>
+                <div class="tool-card">
+                    <i class="fas fa-chart-line fa-3x"></i>
+                    <h3>Personalized Learning</h3>
+                    <p>Practice problems adapt to your skill level. Master a concept, and we'll challenge you. Struggle, and we'll provide foundational support.</p>
+                </div>
+                <div class="tool-card">
+                    <i class="fas fa-lightbulb fa-3x"></i>
+                    <h3>Uncover Misconceptions</h3>
+                    <p>AI helps pinpoint core misunderstandings that lead to recurring errors, helping you fix the root cause of your mistakes, not just the symptoms.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 ThetaMind. All rights reserved.</p>
+        </div>
+    </footer>
+    <script src="/static/js/script.js"></script>
 </body>
 </html>
+

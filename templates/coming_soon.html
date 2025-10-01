@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coming Soon - ThetaMind</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="logo">θ-Mind</a>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/tools" class="active">Tools</a></li>
+                <li><a href="/about">About</a></li>
+                {% if user %}
+                    <li><a href="/dashboard">Dashboard</a></li>
+                    <li><a href="/logout">Logout</a></li>
+                {% else %}
+                    <li><a href="/login">Login</a></li>
+                    <li><a href="/register">Register</a></li>
+                {% endif %}
+            </ul>
+            <button id="theme-toggle" class="theme-toggle-btn">
+                <i class="fas fa-sun"></i>
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <main class="page-content">
+        <section id="coming-soon" class="introduction">
+            <div class="container" style="text-align: center;">
+                <div class="step-icon" style="font-size: 3rem; width: 80px; height: 80px; margin: 0 auto 2rem auto;">
+                    <i class="fas fa-cogs"></i>
+                </div>
+                <h2>{{ topic }} Path is Under Construction</h2>
+                <p>Our team is hard at work developing this learning module. Please check back soon!</p>
+                <a href="/tools" class="btn btn-primary" style="margin-top: 2rem;">Back to Tools</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 ThetaMind. All rights reserved.</p>
+        </div>
+    </footer>
+    <script src="/static/js/script.js"></script>
+</body>
+</html>
